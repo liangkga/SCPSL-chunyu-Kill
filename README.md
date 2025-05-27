@@ -34,9 +34,6 @@ chunyu_kill:
   # 是否启用调试模式
   debug: false
   
-  # 是否启用MVP系统
-  is_enable_m_v_p: true
-  
   # 是否在回合结束时启用友伤
   is_enable_round_ended_f_f: false
   
