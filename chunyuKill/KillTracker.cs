@@ -105,6 +105,12 @@ namespace ServerKillPlugin
 		/// <param name="ev">玩家死亡事件参数</param>
 		public void OnDying(DyingEventArgs ev)
 		{
+			// 防御性编程：检查事件参数是否为空喵~
+			if (ev == null || ev.Player == null)
+			{
+				return;
+			}
+			
 			// 如果没有攻击者（自杀、环境伤害等），不统计击杀喵~
 			if (ev.Attacker == null)
 			{
@@ -112,7 +118,7 @@ namespace ServerKillPlugin
 			}
 			
 			// 查找攻击者的击杀记录喵~
-			KillList killList = MainPlugin.Infos.FirstOrDefault((KillList x) => x.UserId == ev.Attacker.UserId);
+			KillList killList = MainPlugin.Infos?.FirstOrDefault((KillList x) => x.UserId == ev.Attacker.UserId);
 			if (killList != null)
 			{
 				// 判断被击杀的是SCP还是人类喵~
@@ -121,44 +127,68 @@ namespace ServerKillPlugin
 					// 击杀SCP，增加SCP击杀数喵~
 					this.AddKill(KillType.SCP, ev.Attacker);
 					// 向所有其他玩家显示收容信息，使用Hint避免与mvp.dll冲突喵~
-					foreach (Player player in Player.List.Where(x => x != ev.Player))
+					if (Player.List != null)
 					{
-						player.ShowHint(string.Concat(new string[]
+						foreach (Player player in Player.List.Where(x => x != null && x != ev.Player))
 						{
-							"<size=20><color=red>",
-							ev.Attacker.Nickname,
-							" 收容了 ",
-							ev.Player.Nickname,
-							" !</color></size>"
-						}), 3);
+							try
+							{
+								player.ShowHint(string.Concat(new string[]
+								{
+									"<size=20><color=red>",
+									ev.Attacker.Nickname ?? "未知玩家",
+									" 收容了 ",
+									ev.Player.Nickname ?? "未知目标",
+									" !</color></size>"
+								}), 3);
+							}
+							catch
+							{
+								// 忽略显示错误，继续处理其他玩家喵~
+							}
+						}
 					}
 					// 向被击杀的SCP显示收容信息和自定义消息喵~
-					ev.Player.ShowHint(string.Concat(new string[]
+					try
 					{
-						"<size=18><color=orange>你已被 ",
-						ev.Attacker.Nickname,
-						" 收容!\n",
-						ev.Attacker.Nickname,
-						" 对你说:\n",
-						killList.Broadcast.Replace("{Attacker}", ev.Attacker.Nickname ?? "").Replace("{Target}", ev.Player.Nickname ?? ""),
-						"</color></size>"
-					}), 4);
+						ev.Player.ShowHint(string.Concat(new string[]
+						{
+							"<size=18><color=orange>你已被 ",
+							ev.Attacker.Nickname ?? "未知玩家",
+							" 收容!\n",
+							ev.Attacker.Nickname ?? "未知玩家",
+							" 对你说:\n",
+							killList.Broadcast?.Replace("{Attacker}", ev.Attacker.Nickname ?? "").Replace("{Target}", ev.Player.Nickname ?? "") ?? "",
+							"</color></size>"
+						}), 4);
+					}
+					catch
+					{
+						// 忽略显示错误喵~
+					}
 				}
 				else
 				{
 					// 击杀人类，增加人类击杀数喵~
 					this.AddKill(KillType.Human, ev.Attacker);
 					// 向被击杀的人类显示击杀信息和自定义消息喵~
-					ev.Player.ShowHint(string.Concat(new string[]
+					try
 					{
-						"<size=18><color=red>你已被 ",
-						ev.Attacker.Nickname,
-						" 击杀!\n",
-						ev.Attacker.Nickname,
-						" 对你说:\n",
-						killList.Broadcast.Replace("{Attacker}", ev.Attacker.Nickname ?? "").Replace("{Target}", ev.Player.Nickname ?? ""),
-						"</color></size>"
-					}), 4);
+						ev.Player.ShowHint(string.Concat(new string[]
+						{
+							"<size=18><color=red>你已被 ",
+							ev.Attacker.Nickname ?? "未知玩家",
+							" 击杀!\n",
+							ev.Attacker.Nickname ?? "未知玩家",
+							" 对你说:\n",
+							killList.Broadcast?.Replace("{Attacker}", ev.Attacker.Nickname ?? "").Replace("{Target}", ev.Player.Nickname ?? "") ?? "",
+							"</color></size>"
+						}), 4);
+					}
+					catch
+					{
+						// 忽略显示错误喵~
+					}
 				}
 			}
 		}
