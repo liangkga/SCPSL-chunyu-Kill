@@ -206,6 +206,13 @@ namespace ServerKillPlugin
 		/// <param name="player">要更新昵称的玩家</param>
 		public void CheckNickname(Player player)
 		{
+			// 检查玩家是否有有效的64位Steam ID喵~
+			if (string.IsNullOrEmpty(player.UserId) || player.UserId.Length < 17 || !player.UserId.All(char.IsDigit))
+			{
+				// 没有64位ID的玩家不修改名称，保持原样喵~
+				return;
+			}
+			
 			// 防御性编程：确保玩家击杀数据在字典中存在喵~
 			if (!MainPlugin.KillSCP.ContainsKey(player.UserId))
 			{
@@ -217,7 +224,7 @@ namespace ServerKillPlugin
 			}
 			
 			// 格式化昵称：[SCP:击杀数 人类:击杀数] 原昵称喵~
-			player.DisplayNickname = string.Format("[SCP:{0} 人类:{1}] {2}", MainPlugin.KillSCP[player.UserId], MainPlugin.KillHuman[player.UserId], player.Nickname);
+			player.DisplayNickname = string.Format("[SCP:{0} 玩家:{1}] {2}", MainPlugin.KillSCP[player.UserId], MainPlugin.KillHuman[player.UserId], player.Nickname);
 		}
 
 		/// <summary>

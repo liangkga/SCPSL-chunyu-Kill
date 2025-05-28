@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Exiled.API.Interfaces;
 using System.Collections.Generic;
 
@@ -18,16 +18,6 @@ namespace ServerKillPlugin
 		/// 是否启用调试模式，用于输出详细日志喵~
 		/// </summary>
 		public bool Debug { get; set; } = true;
-
-		/// <summary>
-		/// 是否启用MVP功能，显示击杀排行榜喵~
-		/// </summary>
-		public bool IsEnableMVP { get; set; } = true;
-
-		/// <summary>
-		/// 对局结束时是否启用友伤，允许队友互相伤害喵~
-		/// </summary>
-		public bool IsEnableRoundEndedFF { get; set; } = true;
 
 		/// <summary>
 		/// 击杀列表配置信息，包含玩家的击杀记录和显示设置喵~

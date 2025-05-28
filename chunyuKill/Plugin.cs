@@ -20,7 +20,7 @@ namespace ServerKillPlugin
 		/// <summary>
 		/// 插件名称喵~
 		/// </summary>
-		public override string Name { get; } = "铭刻";
+		public override string Name { get; } = "chunyuKill";
 		
 		/// <summary>
 		/// 插件版本号喵~
